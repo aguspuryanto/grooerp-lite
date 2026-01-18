@@ -22,7 +22,9 @@ export interface InventoryItem {
   id: string;
   name: string;
   category: string;
-  stock: number; // Total stock
+  stock: number; 
+  bufferStock?: number; // Added for Smart Inventory
+  barcode?: string;     // Added for Advanced Barcoding
   locationStocks?: { locationId: string, stock: number }[];
   unit: string;
   priceRetail: number;
@@ -69,14 +71,12 @@ export interface Customer {
   lastInteraction: string;
 }
 
-// Added missing DictionaryItem interface for constants.tsx
 export interface DictionaryItem {
   term: string;
   definition: string;
   link: string;
 }
 
-// Added missing PettyCashSystem enum for Finance.tsx
 export enum PettyCashSystem {
   IMPREST = 'IMPREST',
   FLUCTUATING = 'FLUCTUATING'
