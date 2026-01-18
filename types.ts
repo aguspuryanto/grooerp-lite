@@ -11,13 +11,22 @@ export enum ModuleType {
   ANALYTICS = 'ANALYTICS'
 }
 
+export interface Location {
+  id: string;
+  name: string;
+  type: 'Warehouse' | 'Outlet' | 'Distributor';
+  address: string;
+}
+
 export interface InventoryItem {
   id: string;
   name: string;
   category: string;
-  stock: number;
+  stock: number; // Total stock
+  locationStocks?: { locationId: string, stock: number }[];
   unit: string;
-  price: number;
+  priceRetail: number;
+  priceDistributor: number;
   status: 'In Stock' | 'Low Stock' | 'Out of Stock';
 }
 
@@ -27,6 +36,8 @@ export interface Transaction {
   description: string;
   type: 'Income' | 'Expense';
   amount: number;
+  tax: number;
+  total: number;
   category: string;
 }
 
@@ -38,17 +49,6 @@ export interface Project {
   spent: number;
   progress: number;
   status: 'Planning' | 'Ongoing' | 'Completed';
-}
-
-export interface DictionaryItem {
-  term: string;
-  definition: string;
-  link: string;
-}
-
-export enum PettyCashSystem {
-  IMPREST = 'Dana Tetap (Imprest)',
-  FLUCTUATING = 'Dana Fluktuasi'
 }
 
 export interface Lead {
@@ -67,4 +67,17 @@ export interface Customer {
   tier: 'Gold' | 'Silver' | 'Bronze';
   totalSpent: number;
   lastInteraction: string;
+}
+
+// Added missing DictionaryItem interface for constants.tsx
+export interface DictionaryItem {
+  term: string;
+  definition: string;
+  link: string;
+}
+
+// Added missing PettyCashSystem enum for Finance.tsx
+export enum PettyCashSystem {
+  IMPREST = 'IMPREST',
+  FLUCTUATING = 'FLUCTUATING'
 }
