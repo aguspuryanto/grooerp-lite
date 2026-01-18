@@ -1,0 +1,7 @@
+{
+  "name": "GrooERP - Solusi Bisnis Bertumbuh",
+  "description": "A comprehensive ERP platform for modern businesses covering inventory, finance, manufacturing, and project management with integrated business intelligence.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
