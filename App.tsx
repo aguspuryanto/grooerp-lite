@@ -15,6 +15,15 @@ import Analytics from './components/Analytics';
 
 const App: React.FC = () => {
   const [activeModule, setActiveModule] = useState<ModuleType>(ModuleType.DASHBOARD);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const closeSidebar = () => setIsSidebarOpen(false);
+
+  const handleModuleChange = (module: ModuleType) => {
+    setActiveModule(module);
+    closeSidebar();
+  };
 
   const renderModule = () => {
     switch (activeModule) {
@@ -32,12 +41,28 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar activeModule={activeModule} setActiveModule={setActiveModule} />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Header activeModule={activeModule} />
+    <div className="flex h-screen overflow-hidden bg-slate-50">
+      <Sidebar 
+        activeModule={activeModule} 
+        setActiveModule={handleModuleChange} 
+        isOpen={isSidebarOpen} 
+        onClose={closeSidebar} 
+      />
+      
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden backdrop-blur-sm transition-opacity"
+          onClick={closeSidebar}
+        />
+      )}
+
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+        <Header activeModule={activeModule} onMenuClick={toggleSidebar} />
         <main className="flex-1 overflow-y-auto p-4 md:p-8">
-          {renderModule()}
+          <div className="max-w-7xl mx-auto">
+            {renderModule()}
+          </div>
         </main>
       </div>
     </div>

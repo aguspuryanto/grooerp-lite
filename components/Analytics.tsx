@@ -31,80 +31,83 @@ const projectHealthData = [
 
 const Analytics: React.FC = () => {
   return (
-    <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 md:space-y-8 animate-in slide-in-from-bottom-4 duration-500 pb-10">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <p className="text-sm font-medium text-slate-500">Laporan Periodik Bisnis</p>
-          <h2 className="text-2xl font-bold text-slate-900">Advanced Business Intelligence</h2>
+          <p className="text-[10px] md:text-xs font-black text-blue-600 uppercase tracking-widest">Business Intelligence</p>
+          <h2 className="text-xl md:text-2xl font-black text-slate-900 leading-tight">Analitik Performa</h2>
         </div>
-        <div className="flex space-x-2">
-          <select className="bg-white border border-slate-200 rounded-lg px-4 py-2 text-sm font-semibold text-slate-700">
-            <option>Tahun Ini (2023)</option>
-            <option>Tahun Lalu (2022)</option>
+        <div className="flex space-x-2 w-full md:w-auto">
+          <select className="flex-1 md:flex-none bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs md:text-sm font-bold text-slate-700 outline-none">
+            <option>Tahun 2023</option>
+            <option>Tahun 2022</option>
           </select>
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-blue-500/20">Unduh PDF</button>
+          <button className="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-black shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all uppercase tracking-widest">Export</button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-          <div className="p-3 bg-blue-50 rounded-xl text-blue-600">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+        <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center space-x-4 group hover:border-blue-500 transition-colors">
+          <div className="p-3 bg-blue-50 rounded-2xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase">Margin Keuntungan</p>
-            <p className="text-xl font-black text-slate-800">24.8%</p>
-            <p className="text-[10px] text-green-600 font-bold">+2.4% vs bln lalu</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Profit Margin</p>
+            <p className="text-xl font-black text-slate-800 leading-none">24.8%</p>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-          <div className="p-3 bg-green-50 rounded-xl text-green-600">
+        <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center space-x-4 group hover:border-green-500 transition-colors">
+          <div className="p-3 bg-green-50 rounded-2xl text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase">Customer Acquisition Cost</p>
-            <p className="text-xl font-black text-slate-800">Rp 125K</p>
-            <p className="text-[10px] text-red-600 font-bold">+12% vs bln lalu</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">CAC (Unit)</p>
+            <p className="text-xl font-black text-slate-800 leading-none">Rp 125K</p>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-          <div className="p-3 bg-orange-50 rounded-xl text-orange-600">
+        <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center space-x-4 group hover:border-orange-500 transition-colors">
+          <div className="p-3 bg-orange-50 rounded-2xl text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-all">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-400 uppercase">On-time Delivery Rate</p>
-            <p className="text-xl font-black text-slate-800">92.4%</p>
-            <p className="text-[10px] text-green-600 font-bold">+5.1% vs bln lalu</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Delivery</p>
+            <p className="text-xl font-black text-slate-800 leading-none">92.4%</p>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 className="text-lg font-bold mb-6">Tren Penjualan vs Biaya</h3>
-          <div className="h-[350px]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+        <div className="bg-white p-5 md:p-8 rounded-3xl border border-slate-200 shadow-sm">
+          <h3 className="text-base md:text-lg font-black mb-6 flex items-center gap-2">
+            <span className="w-1.5 h-6 bg-blue-600 rounded-full"></span>
+            Tren Pendapatan vs Biaya
+          </h3>
+          <div className="h-[250px] md:h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={salesData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="month" axisLine={false} tickLine={false} />
-                <YAxis axisLine={false} tickLine={false} />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fontSize: 10}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fontSize: 10}} />
                 <Tooltip />
-                <Legend iconType="circle" />
-                <Line type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={3} dot={{ r: 6 }} activeDot={{ r: 8 }} name="Pendapatan" />
-                <Line type="monotone" dataKey="sales" stroke="#94a3b8" strokeWidth={2} name="Biaya Operasional" />
+                <Legend iconType="circle" wrapperStyle={{fontSize: 10, paddingTop: 20}} />
+                <Line type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={4} dot={{ r: 4 }} activeDot={{ r: 8 }} name="In" />
+                <Line type="monotone" dataKey="sales" stroke="#94a3b8" strokeWidth={2} name="Out" />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 className="text-lg font-bold mb-6">Kesehatan Proyek Aktif (KPI)</h3>
-          <div className="h-[350px] flex justify-center">
+        <div className="bg-white p-5 md:p-8 rounded-3xl border border-slate-200 shadow-sm">
+          <h3 className="text-base md:text-lg font-black mb-6 flex items-center gap-2">
+            <span className="w-1.5 h-6 bg-purple-600 rounded-full"></span>
+            Kesehatan Proyek
+          </h3>
+          <div className="h-[250px] md:h-[350px] flex justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="80%" data={projectHealthData}>
                 <PolarGrid stroke="#f1f5f9" />
-                <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 12 }} />
-                <Radar name="Kesehatan" dataKey="A" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.5} />
+                <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10, fontWeight: 'bold' }} />
+                <Radar name="Status" dataKey="A" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.6} />
                 <Tooltip />
               </RadarChart>
             </ResponsiveContainer>
@@ -112,10 +115,10 @@ const Analytics: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1 bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 className="text-lg font-bold mb-6 text-center">Segmentasi Tiering</h3>
-          <div className="h-[250px]">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="bg-white p-5 md:p-8 rounded-3xl border border-slate-200 shadow-sm">
+          <h3 className="text-center text-sm font-black mb-6 uppercase tracking-widest text-slate-400">Pangsa Pasar</h3>
+          <div className="h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={customerTierData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
@@ -124,22 +127,22 @@ const Analytics: React.FC = () => {
                   ))}
                 </Pie>
                 <Tooltip />
-                <Legend verticalAlign="bottom" height={36}/>
+                <Legend verticalAlign="bottom" height={36} wrapperStyle={{fontSize: 10}}/>
               </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="lg:col-span-2 bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 className="text-lg font-bold mb-6">Distribusi Alokasi Budget Per-Indeks</h3>
-          <div className="h-[250px]">
+        <div className="lg:col-span-2 bg-white p-5 md:p-8 rounded-3xl border border-slate-200 shadow-sm">
+          <h3 className="text-sm font-black mb-6 uppercase tracking-widest text-slate-400">Distribusi Budget (Regional)</h3>
+          <div className="h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={salesData} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
                 <XAxis type="number" hide />
-                <YAxis dataKey="month" type="category" axisLine={false} tickLine={false} />
+                <YAxis dataKey="month" type="category" axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 'bold'}} />
                 <Tooltip />
-                <Bar dataKey="revenue" fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={20} />
+                <Bar dataKey="revenue" fill="#3b82f6" radius={[0, 10, 10, 0]} barSize={16} />
               </BarChart>
             </ResponsiveContainer>
           </div>
