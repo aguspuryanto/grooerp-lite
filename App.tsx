@@ -12,6 +12,7 @@ import Manufacturing from './components/Manufacturing';
 import Dictionary from './components/Dictionary';
 import CRM from './components/CRM';
 import Analytics from './components/Analytics';
+import Profile from './components/Profile';
 import Login from './components/Login';
 import { GoogleGenAI } from "@google/genai";
 
@@ -44,6 +45,7 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem('groo_user');
+    setActiveModule(ModuleType.DASHBOARD);
   };
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -78,6 +80,8 @@ const App: React.FC = () => {
   };
 
   const renderModule = () => {
+    if (!user) return null;
+
     switch (activeModule) {
       case ModuleType.DASHBOARD: return <Dashboard />;
       case ModuleType.INVENTORY: return <Inventory />;
@@ -88,6 +92,7 @@ const App: React.FC = () => {
       case ModuleType.DICTIONARY: return <Dictionary />;
       case ModuleType.CRM: return <CRM />;
       case ModuleType.ANALYTICS: return <Analytics />;
+      case ModuleType.PROFILE: return <Profile user={user} />;
       default: return <Dashboard />;
     }
   };
@@ -114,7 +119,12 @@ const App: React.FC = () => {
       )}
 
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-        <Header activeModule={activeModule} onMenuClick={toggleSidebar} onLogout={handleLogout} />
+        <Header 
+          activeModule={activeModule} 
+          onMenuClick={toggleSidebar} 
+          onLogout={handleLogout} 
+          onProfileClick={() => setActiveModule(ModuleType.PROFILE)}
+        />
         <main className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="max-w-7xl mx-auto">
             {renderModule()}

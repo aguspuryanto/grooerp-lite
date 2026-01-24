@@ -62,15 +62,22 @@ const Sidebar: React.FC<SidebarProps> = ({ activeModule, setActiveModule, isOpen
       </nav>
 
       <div className="p-4 border-t border-slate-800">
-        <div className="flex items-center space-x-3 px-4 py-3 bg-slate-800/50 rounded-2xl">
-          <div className="w-10 h-10 rounded-full bg-slate-700 overflow-hidden ring-2 ring-slate-800 flex-shrink-0">
+        <button 
+          onClick={() => setActiveModule(ModuleType.PROFILE)}
+          className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl transition-all group ${
+            activeModule === ModuleType.PROFILE ? 'bg-blue-600/10 border border-blue-600/20' : 'hover:bg-slate-800'
+          }`}
+        >
+          <div className="w-10 h-10 rounded-full bg-slate-700 overflow-hidden ring-2 ring-slate-800 flex-shrink-0 group-hover:ring-blue-600/50 transition-all">
             <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
           </div>
-          <div className="overflow-hidden">
-            <p className="text-sm font-semibold text-white truncate">{user.name}</p>
+          <div className="overflow-hidden text-left">
+            <p className={`text-sm font-semibold truncate ${activeModule === ModuleType.PROFILE ? 'text-blue-400' : 'text-white'}`}>
+              {user.name}
+            </p>
             <p className="text-xs text-slate-500 truncate">{user.role}</p>
           </div>
-        </div>
+        </button>
       </div>
     </aside>
   );

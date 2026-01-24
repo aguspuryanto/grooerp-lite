@@ -8,7 +8,8 @@ export enum ModuleType {
   MANUFACTURING = 'MANUFACTURING',
   DICTIONARY = 'DICTIONARY',
   CRM = 'CRM',
-  ANALYTICS = 'ANALYTICS'
+  ANALYTICS = 'ANALYTICS',
+  PROFILE = 'PROFILE'
 }
 
 export interface User {
