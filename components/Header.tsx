@@ -7,9 +7,10 @@ import { isSupabaseConfigured } from '../supabase';
 interface HeaderProps {
   activeModule: ModuleType;
   onMenuClick: () => void;
+  onLogout: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ activeModule, onMenuClick }) => {
+const Header: React.FC<HeaderProps> = ({ activeModule, onMenuClick, onLogout }) => {
   const getTitle = () => {
     switch (activeModule) {
       case ModuleType.DASHBOARD: return 'Beranda Dashboard';
@@ -41,8 +42,8 @@ const Header: React.FC<HeaderProps> = ({ activeModule, onMenuClick }) => {
         </h2>
       </div>
 
-      <div className="flex items-center space-x-2 md:space-x-6">
-        <div className="relative hidden xl:block">
+      <div className="flex items-center space-x-2 md:space-x-4">
+        <div className="relative hidden xl:block mr-2">
           <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
             <Icons.Search />
           </span>
@@ -58,12 +59,22 @@ const Header: React.FC<HeaderProps> = ({ activeModule, onMenuClick }) => {
           <span className="absolute top-2 right-2 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
         </button>
 
-        <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-full border transition-all ${isSupabaseConfigured ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
+        <div className={`hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full border transition-all ${isSupabaseConfigured ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
           <span className={`w-2 h-2 rounded-full ${isSupabaseConfigured ? 'bg-green-500 animate-pulse' : 'bg-amber-500'}`}></span>
           <span className={`text-[10px] md:text-xs font-black uppercase tracking-tight ${isSupabaseConfigured ? 'text-green-700' : 'text-amber-700'}`}>
             {isSupabaseConfigured ? 'Cloud Live' : 'Demo Mode'}
           </span>
         </div>
+
+        <div className="w-px h-8 bg-slate-200 mx-1 hidden sm:block"></div>
+
+        <button 
+          onClick={onLogout}
+          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+          title="Keluar dari Aplikasi"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
       </div>
     </header>
   );

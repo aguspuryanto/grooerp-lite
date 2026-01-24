@@ -11,6 +11,14 @@ export enum ModuleType {
   ANALYTICS = 'ANALYTICS'
 }
 
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  avatar?: string;
+}
+
 export interface Location {
   id: string;
   name: string;
@@ -23,8 +31,8 @@ export interface InventoryItem {
   name: string;
   category: string;
   stock: number; 
-  bufferStock?: number; // Added for Smart Inventory
-  barcode?: string;     // Added for Advanced Barcoding
+  bufferStock?: number;
+  barcode?: string;
   locationStocks?: { locationId: string, stock: number }[];
   unit: string;
   priceRetail: number;

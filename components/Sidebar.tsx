@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ModuleType } from '../types';
+import { ModuleType, User } from '../types';
 import { Icons } from '../constants';
 
 interface SidebarProps {
@@ -8,9 +8,10 @@ interface SidebarProps {
   setActiveModule: (module: ModuleType) => void;
   isOpen: boolean;
   onClose: () => void;
+  user: User;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activeModule, setActiveModule, isOpen, onClose }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeModule, setActiveModule, isOpen, onClose, user }) => {
   const navItems = [
     { type: ModuleType.DASHBOARD, label: 'Dashboard', icon: Icons.Dashboard },
     { type: ModuleType.CRM, label: 'CRM & Pelanggan', icon: Icons.CRM },
@@ -62,12 +63,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeModule, setActiveModule, isOpen
 
       <div className="p-4 border-t border-slate-800">
         <div className="flex items-center space-x-3 px-4 py-3 bg-slate-800/50 rounded-2xl">
-          <div className="w-10 h-10 rounded-full bg-slate-700 overflow-hidden ring-2 ring-slate-800">
-            <img src="https://picsum.photos/seed/admin/100" alt="Avatar" />
+          <div className="w-10 h-10 rounded-full bg-slate-700 overflow-hidden ring-2 ring-slate-800 flex-shrink-0">
+            <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
           </div>
           <div className="overflow-hidden">
-            <p className="text-sm font-semibold text-white truncate">Budi Santoso</p>
-            <p className="text-xs text-slate-500">Super Admin</p>
+            <p className="text-sm font-semibold text-white truncate">{user.name}</p>
+            <p className="text-xs text-slate-500 truncate">{user.role}</p>
           </div>
         </div>
       </div>

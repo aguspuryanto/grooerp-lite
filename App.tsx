@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { ModuleType } from './types';
+import { ModuleType, User } from './types';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
@@ -12,15 +12,39 @@ import Manufacturing from './components/Manufacturing';
 import Dictionary from './components/Dictionary';
 import CRM from './components/CRM';
 import Analytics from './components/Analytics';
+import Login from './components/Login';
 import { GoogleGenAI } from "@google/genai";
 
 const App: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
   const [activeModule, setActiveModule] = useState<ModuleType>(ModuleType.DASHBOARD);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAiOpen, setIsAiOpen] = useState(false);
   const [aiMessage, setAiMessage] = useState('');
   const [aiResponse, setAiResponse] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
+
+  // Persistence check
+  useEffect(() => {
+    const savedUser = localStorage.getItem('groo_user');
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        localStorage.removeItem('groo_user');
+      }
+    }
+  }, []);
+
+  const handleLoginSuccess = (userData: User) => {
+    setUser(userData);
+    localStorage.setItem('groo_user', JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('groo_user');
+  };
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -68,6 +92,10 @@ const App: React.FC = () => {
     }
   };
 
+  if (!user) {
+    return <Login onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
       <Sidebar 
@@ -75,6 +103,7 @@ const App: React.FC = () => {
         setActiveModule={handleModuleChange} 
         isOpen={isSidebarOpen} 
         onClose={closeSidebar} 
+        user={user}
       />
       
       {isSidebarOpen && (
@@ -85,7 +114,7 @@ const App: React.FC = () => {
       )}
 
       <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-        <Header activeModule={activeModule} onMenuClick={toggleSidebar} />
+        <Header activeModule={activeModule} onMenuClick={toggleSidebar} onLogout={handleLogout} />
         <main className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="max-w-7xl mx-auto">
             {renderModule()}
