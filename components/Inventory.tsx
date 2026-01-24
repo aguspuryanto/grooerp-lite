@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { InventoryItem, Location } from '../types';
-import { supabase, handleSupabaseError } from '../supabase';
+import { supabase, isSupabaseConfigured, handleSupabaseError } from '../supabase';
 
 const mockLocations: Location[] = [
   { id: 'WH-001', name: 'Gudang Pusat (Jakarta)', type: 'Warehouse', address: 'Jakarta Industrial Estate' },
@@ -9,16 +9,19 @@ const mockLocations: Location[] = [
   { id: 'OUT-002', name: 'Transmart (Surabaya)', type: 'Outlet', address: 'Surabaya City' },
 ];
 
+const INITIAL_MOCK_ITEMS: InventoryItem[] = [
+  { id: '1', name: 'Kertas A4 80gr', category: 'Material', stock: 150, unit: 'Rim', priceRetail: 55000, priceDistributor: 48000, status: 'In Stock' },
+  { id: '2', name: 'Tinta HP 680 Black', category: 'Elektronik', stock: 12, unit: 'Unit', priceRetail: 125000, priceDistributor: 110000, status: 'Low Stock' },
+  { id: '3', name: 'Laptop Pro-X1', category: 'Elektronik', stock: 0, unit: 'Unit', priceRetail: 15000000, priceDistributor: 13500000, status: 'Out of Stock' },
+];
+
 const Inventory: React.FC = () => {
-  const [items, setItems] = useState<InventoryItem[]>([]);
+  const [items, setItems] = useState<InventoryItem[]>(INITIAL_MOCK_ITEMS);
   const [loading, setLoading] = useState(true);
+  const [isDemoMode, setIsDemoMode] = useState(!isSupabaseConfigured);
   const [selectedLocation, setSelectedLocation] = useState<string>('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isImportOpen, setIsImportOpen] = useState(false);
-  const [isTransferOpen, setIsTransferOpen] = useState(false);
   
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [formData, setFormData] = useState({
     name: '',
     category: 'Material',
@@ -28,22 +31,24 @@ const Inventory: React.FC = () => {
     priceDistributor: ''
   });
 
-  // 1. Ambil data dari Supabase saat komponen dimuat
   useEffect(() => {
-    fetchInventory();
+    if (isSupabaseConfigured) {
+      fetchInventory();
+      
+      const channel = supabase
+        .channel('inventory-changes')
+        // Fix: Added missing 'schema' property to the filter object to satisfy Supabase Realtime types.
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, () => {
+          fetchInventory();
+        })
+        .subscribe();
 
-    // 2. Setup Real-time Subscription
-    const channel = supabase
-      .channel('inventory-changes')
-      .on('postgres_changes', { event: '*', table: 'inventory' }, (payload) => {
-        console.log('Real-time change detected:', payload);
-        fetchInventory(); // Refresh data saat ada perubahan di DB
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   const fetchInventory = async () => {
@@ -55,9 +60,16 @@ const Inventory: React.FC = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      if (data) setItems(data as any);
-    } catch (error) {
-      handleSupabaseError(error);
+      if (data && data.length > 0) {
+        setItems(data as any);
+        setIsDemoMode(false);
+      }
+    } catch (error: any) {
+      const isFetchError = handleSupabaseError(error);
+      if (isFetchError) {
+        console.log("Switching to Demo Mode due to connection failure.");
+        setIsDemoMode(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -72,7 +84,7 @@ const Inventory: React.FC = () => {
     e.preventDefault();
     const stockVal = parseInt(formData.stock) || 0;
     
-    const newItem = {
+    const newItem: Partial<InventoryItem> & { price_retail?: number, price_distributor?: number } = {
       name: formData.name,
       category: formData.category,
       stock: stockVal,
@@ -82,34 +94,52 @@ const Inventory: React.FC = () => {
       status: stockVal > 20 ? 'In Stock' : (stockVal > 0 ? 'Low Stock' : 'Out of Stock')
     };
 
-    try {
-      const { error } = await supabase
-        .from('inventory')
-        .insert([newItem]);
-
-      if (error) throw error;
-      
-      setIsModalOpen(false);
-      setFormData({ name: '', category: 'Material', stock: '', unit: 'Unit', priceRetail: '', priceDistributor: '' });
-      // fetchInventory() akan dipicu otomatis oleh subscription
-    } catch (error) {
-      handleSupabaseError(error);
+    if (!isDemoMode && isSupabaseConfigured) {
+      try {
+        const { error } = await supabase.from('inventory').insert([newItem]);
+        if (error) throw error;
+        setIsModalOpen(false);
+        setFormData({ name: '', category: 'Material', stock: '', unit: 'Unit', priceRetail: '', priceDistributor: '' });
+      } catch (error) {
+        handleSupabaseError(error);
+        // Fallback to local if insert fails
+        addLocalItem(newItem);
+      }
+    } else {
+      addLocalItem(newItem);
     }
+  };
+
+  const addLocalItem = (item: any) => {
+    const localItem: InventoryItem = {
+      id: Math.random().toString(36).substr(2, 9),
+      name: item.name,
+      category: item.category,
+      stock: item.stock,
+      unit: item.unit,
+      priceRetail: item.price_retail || 0,
+      priceDistributor: item.price_distributor || 0,
+      status: item.status
+    };
+    setItems([localItem, ...items]);
+    setIsModalOpen(false);
+    setFormData({ name: '', category: 'Material', stock: '', unit: 'Unit', priceRetail: '', priceDistributor: '' });
   };
 
   return (
     <div className="space-y-4 md:space-y-6 animate-in fade-in duration-500">
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-blue-600 text-white p-6 rounded-3xl shadow-lg shadow-blue-200">
           <p className="text-[10px] font-black uppercase tracking-widest opacity-80 mb-1">Total SKU Terdaftar</p>
           <p className="text-3xl font-black">{loading ? '...' : items.length} <span className="text-xs font-normal">Produk</span></p>
         </div>
-        <div className="bg-white border border-slate-200 p-6 rounded-3xl">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status Koneksi Database</p>
+        <div className={`p-6 rounded-3xl border ${isDemoMode ? 'bg-amber-50 border-amber-200' : 'bg-white border-slate-200'}`}>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Status Koneksi Data</p>
           <div className="flex items-center space-x-2">
-             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-             <p className="text-sm font-black text-slate-800 tracking-tight uppercase">Supabase Cloud Aktif</p>
+             <span className={`w-2 h-2 rounded-full ${isDemoMode ? 'bg-amber-500' : 'bg-green-500 animate-pulse'}`}></span>
+             <p className={`text-sm font-black tracking-tight uppercase ${isDemoMode ? 'text-amber-700' : 'text-slate-800'}`}>
+               {isDemoMode ? 'Mode Demo (Offline)' : 'Cloud Aktif'}
+             </p>
           </div>
         </div>
         <div className="bg-white border border-slate-200 p-6 rounded-3xl">
@@ -122,9 +152,6 @@ const Inventory: React.FC = () => {
         <div className="flex space-x-2 w-full sm:w-auto">
           <button onClick={() => setIsModalOpen(true)} className="flex-1 sm:flex-none px-6 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-500/20 active:scale-95 transition-all">
             + Tambah Produk
-          </button>
-          <button onClick={() => setIsTransferOpen(true)} className="flex-1 sm:flex-none px-4 py-2.5 bg-slate-800 text-white rounded-xl text-sm font-bold shadow-lg active:scale-95 transition-all">
-            Mutasi Stok
           </button>
         </div>
         <div className="flex items-center space-x-3 w-full sm:w-auto">
@@ -155,13 +182,13 @@ const Inventory: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {loading ? (
+              {loading && !isDemoMode ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-slate-400 italic">Menghubungkan ke database...</td>
                 </tr>
               ) : items.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400 italic">Belum ada data di database Supabase.</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-400 italic">Belum ada data tersedia.</td>
                 </tr>
               ) : items.map((item: any) => (
                 <tr key={item.id} className="hover:bg-slate-50 transition-all group">
@@ -173,7 +200,7 @@ const Inventory: React.FC = () => {
                   <td className="px-6 py-4">
                     <span className="text-sm font-black text-slate-900">{item.stock} {item.unit}</span>
                   </td>
-                  <td className="px-6 py-4 text-sm font-bold">Rp {item.price_retail?.toLocaleString()}</td>
+                  <td className="px-6 py-4 text-sm font-bold">Rp {(item.priceRetail || item.price_retail || 0).toLocaleString()}</td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-1 text-[8px] font-black rounded-lg uppercase ${
                       item.status === 'In Stock' ? 'bg-green-100 text-green-700' : 
@@ -194,12 +221,11 @@ const Inventory: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal Tambah Produk */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden">
             <div className="p-8">
-              <h3 className="text-xl font-black text-slate-800 mb-6">Tambah Produk ke Cloud</h3>
+              <h3 className="text-xl font-black text-slate-800 mb-6">Tambah Produk {isDemoMode ? '(Lokal)' : '(Cloud)'}</h3>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Nama Barang</label>
@@ -225,7 +251,9 @@ const Inventory: React.FC = () => {
                 </div>
                 <div className="pt-4 flex space-x-3">
                   <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-3 text-slate-500 font-black text-xs uppercase tracking-widest">Batal</button>
-                  <button type="submit" className="flex-2 py-3 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-blue-500/20">Simpan ke Supabase</button>
+                  <button type="submit" className="flex-2 py-3 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-blue-500/20">
+                    {isDemoMode ? 'Simpan Secara Lokal' : 'Simpan ke Cloud'}
+                  </button>
                 </div>
               </form>
             </div>

@@ -2,6 +2,7 @@
 import React from 'react';
 import { ModuleType } from '../types';
 import { Icons } from '../constants';
+import { isSupabaseConfigured } from '../supabase';
 
 interface HeaderProps {
   activeModule: ModuleType;
@@ -35,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ activeModule, onMenuClick }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"/>
           </svg>
         </button>
-        <h2 className="text-lg md:text-2xl font-bold text-slate-800 truncate max-w-[200px] md:max-w-none">
+        <h2 className="text-lg md:text-2xl font-bold text-slate-800 truncate max-w-[150px] md:max-w-none">
           {getTitle()}
         </h2>
       </div>
@@ -57,9 +58,11 @@ const Header: React.FC<HeaderProps> = ({ activeModule, onMenuClick }) => {
           <span className="absolute top-2 right-2 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
         </button>
 
-        <div className="hidden sm:flex items-center space-x-2 bg-slate-100 px-3 py-1.5 rounded-full cursor-pointer hover:bg-slate-200 transition-all border border-slate-200">
-          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-          <span className="text-xs md:text-sm font-medium text-slate-700">Online</span>
+        <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-full border transition-all ${isSupabaseConfigured ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
+          <span className={`w-2 h-2 rounded-full ${isSupabaseConfigured ? 'bg-green-500 animate-pulse' : 'bg-amber-500'}`}></span>
+          <span className={`text-[10px] md:text-xs font-black uppercase tracking-tight ${isSupabaseConfigured ? 'text-green-700' : 'text-amber-700'}`}>
+            {isSupabaseConfigured ? 'Cloud Live' : 'Demo Mode'}
+          </span>
         </div>
       </div>
     </header>
